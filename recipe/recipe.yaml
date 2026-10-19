@@ -3,9 +3,11 @@ schema_version: 1
 context:
   name: pycuampcor
   version: "2.2.0"
+  # keep a plain integer here: the bot bumps it for rebuilds
+  build: 1
   # cuda builds get a higher build number so that they are preferred where the
   # __cuda virtual package (an NVIDIA driver) is available; cpu builds otherwise
-  build_number: 1
+  build_offset: ${{ 100 if cuda_compiler_version != "None" else 0 }}
   build_prefix: ${{ "cuda" ~ (cuda_compiler_version | version_to_buildstring) if cuda_compiler_version != "None" else "cpu" }}
   cuda_option: ${{ "-Ccmake.define.PYCUAMPCOR_CUDA=ON -Ccmake.define.CMAKE_CUDA_ARCHITECTURES=all-major" if cuda_compiler_version != "None" else "-Ccmake.define.PYCUAMPCOR_CUDA=OFF" }}
 
@@ -18,8 +20,8 @@ source:
   sha256: 7ef1e4794305067a8b30fbe514b4e2ea007db742b46048e97ac3aa18dce0e125
 
 build:
-  number: ${{ build_number }}
-  string: ${{ build_prefix }}_py${{ python | version_to_buildstring }}h${{ hash }}_${{ build_number }}
+  number: ${{ build + build_offset }}
+  string: ${{ build_prefix }}_py${{ python | version_to_buildstring }}h${{ hash }}_${{ build + build_offset }}
   skip: win
   script:
     env:
