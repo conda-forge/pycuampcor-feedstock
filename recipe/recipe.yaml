@@ -4,7 +4,7 @@ context:
   name: pycuampcor
   version: "2.2.0"
   # keep a plain integer here: the bot bumps it for rebuilds
-  build: 2
+  build: 3
   # cuda builds get a higher build number so that they are preferred where the
   # __cuda virtual package (an NVIDIA driver) is available; cpu builds otherwise
   build_offset: ${{ 100 if cuda_compiler_version != "None" else 0 }}
