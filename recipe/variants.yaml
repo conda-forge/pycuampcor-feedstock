@@ -1,0 +1,19 @@
+# Also build for CUDA 13.0, besides CUDA 12.9 and 13.4 from the conda-forge pinning: a cuda130
+# build requires cuda-version >=13.0, so it also works with an older CUDA 13 toolkit (e.g., from
+# the nvidia channel), while a cuda134 build requires cuda-version >=13.4.
+# cuda_compiler_version is zipped with the compiler and c_stdlib versions.
+cuda_compiler_version:
+  - if: linux
+    then: [None, "12.9", "13.0", "13.4"]
+c_compiler_version:
+  - if: linux
+    then: ["15", "14", "14", "15"]
+cxx_compiler_version:
+  - if: linux
+    then: ["15", "14", "14", "15"]
+fortran_compiler_version:
+  - if: linux
+    then: ["15", "14", "14", "15"]
+c_stdlib_version:
+  - if: linux
+    then: ["2.17", "2.17", "2.28", "2.28"]
