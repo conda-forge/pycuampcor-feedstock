@@ -2,9 +2,9 @@ schema_version: 1
 
 context:
   name: pycuampcor
-  version: "2.2.0"
+  version: "2.3.0"
   # keep a plain integer here: the bot bumps it for rebuilds
-  build: 3
+  build: 0
   # cuda builds get a higher build number so that they are preferred where the
   # __cuda virtual package (an NVIDIA driver) is available; cpu builds otherwise
   build_offset: ${{ 100 if cuda_compiler_version != "None" else 0 }}
@@ -17,7 +17,7 @@ package:
 
 source:
   url: https://github.com/earthdef/cuAmpcor/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 7ef1e4794305067a8b30fbe514b4e2ea007db742b46048e97ac3aa18dce0e125
+  sha256: 432df76f19169cda224e72a034cb662922363bad0b3ec9029ee61fd1a95337ba
 
 build:
   number: ${{ build + build_offset }}
@@ -28,7 +28,7 @@ build:
       # use ninja (make is not a build dependency)
       CMAKE_GENERATOR: Ninja
     content:
-      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation -Ccmake.define.PYCUAMPCOR_HDF5=ON ${{ cuda_option }}
+      - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation -Ccmake.define.PYCUAMPCOR_HDF5=ON -Ccmake.define.PYCUAMPCOR_GDAL=ON ${{ cuda_option }}
 
 requirements:
   build:
@@ -51,6 +51,7 @@ requirements:
     - fftw
     - hdf5
     - zlib
+    - libgdal-core
     - if: linux
       then: libgomp
     - if: osx
@@ -78,23 +79,34 @@ tests:
         - pytest
         - numpy
         - h5py
+        # the GDAL python bindings and matplotlib: the tests of the GDAL images, geo_offsets and plot_offsets
+        - gdal
+        - matplotlib-base
     script:
       - if: cuda_compiler_version != "None"
         then: python -c "import pycuampcor; assert pycuampcor.has_cuda"
         else: python -c "import pycuampcor; assert not pycuampcor.has_cuda"
-      - python -c "import pycuampcor; assert pycuampcor.has_hdf5"
+      - python -c "import pycuampcor; assert pycuampcor.has_hdf5 and pycuampcor.has_gdal"
+      - python -m pycuampcor.dense_offsets --help
+      - python -m pycuampcor.geo_offsets --help
+      - python -m pycuampcor.plot_offsets --help
       - pytest -v tests/python
 
 about:
   homepage: https://github.com/earthdef/cuAmpcor
-  license: MIT
-  license_file: LICENSE
+  license: Apache-2.0
+  license_file:
+    - LICENSE
+    - NOTICE
   summary: Amplitude cross-correlation (ampcor) for SAR images with CPU (OpenMP) and CUDA backends
   description: |
-    PyCuAmpcor estimates the pixel offsets between two SAR images with the
-    amplitude cross-correlation (feature tracking) method, for InSAR processing
-    with ISCE2/ISCE3. The cpu variant provides PyCPUAmpcor; the cuda variant
-    provides both PyCPUAmpcor and PyCuAmpcor (GPU).
+    PyCuAmpcor estimates the pixel offsets between two images with the
+    amplitude cross-correlation (feature, speckle or offset tracking) method,
+    e.g., for SAR images with ISCE2/ISCE3, or optical images. It reads raw
+    binary images, HDF5 datasets (e.g., NISAR RSLCs) and GDAL rasters, and has
+    the command-line tools dense_offsets, geo_offsets and plot_offsets. The cpu
+    variant provides PyCPUAmpcor; the cuda variant provides both PyCPUAmpcor
+    and PyCuAmpcor (GPU).
   repository: https://github.com/earthdef/cuAmpcor
   documentation: https://github.com/earthdef/cuAmpcor/blob/main/README.md
 

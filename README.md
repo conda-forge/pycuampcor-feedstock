@@ -5,7 +5,7 @@ Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/pycuampcor-feed
 
 Home: https://github.com/earthdef/cuAmpcor
 
-Package license: MIT
+Package license: Apache-2.0
 
 Summary: Amplitude cross-correlation (ampcor) for SAR images with CPU (OpenMP) and CUDA backends
 
@@ -13,10 +13,13 @@ Development: https://github.com/earthdef/cuAmpcor
 
 Documentation: https://github.com/earthdef/cuAmpcor/blob/main/README.md
 
-PyCuAmpcor estimates the pixel offsets between two SAR images with the
-amplitude cross-correlation (feature tracking) method, for InSAR processing
-with ISCE2/ISCE3. The cpu variant provides PyCPUAmpcor; the cuda variant
-provides both PyCPUAmpcor and PyCuAmpcor (GPU).
+PyCuAmpcor estimates the pixel offsets between two images with the
+amplitude cross-correlation (feature, speckle or offset tracking) method,
+e.g., for SAR images with ISCE2/ISCE3, or optical images. It reads raw
+binary images, HDF5 datasets (e.g., NISAR RSLCs) and GDAL rasters, and has
+the command-line tools dense_offsets, geo_offsets and plot_offsets. The cpu
+variant provides PyCPUAmpcor; the cuda variant provides both PyCPUAmpcor
+and PyCuAmpcor (GPU).
 
 Current build status
 ====================
