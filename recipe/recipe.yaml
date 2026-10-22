@@ -2,9 +2,9 @@ schema_version: 1
 
 context:
   name: pycuampcor
-  version: "2.2.0"
+  version: "2.3.0"
   # keep a plain integer here: the bot bumps it for rebuilds
-  build: 3
+  build: 0
   # cuda builds get a higher build number so that they are preferred where the
   # __cuda virtual package (an NVIDIA driver) is available; cpu builds otherwise
   build_offset: ${{ 100 if cuda_compiler_version != "None" else 0 }}
@@ -17,7 +17,7 @@ package:
 
 source:
   url: https://github.com/earthdef/cuAmpcor/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 7ef1e4794305067a8b30fbe514b4e2ea007db742b46048e97ac3aa18dce0e125
+  sha256: 432df76f19169cda224e72a034cb662922363bad0b3ec9029ee61fd1a95337ba
 
 build:
   number: ${{ build + build_offset }}
